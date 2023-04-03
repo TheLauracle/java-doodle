@@ -1,18 +1,18 @@
 package notebookdoodle;
 
 
-public class Cat extends Animal
+public class Dog extends Animal
 {
-	public Cat() {
-		super(); // implicit but meh
+	public Dog() {
+		super();
 	}
 	
-	public Cat(String name, int age) {
+	public Dog(String name, int age) {
 		super(name, age);
 	}
 	
 	public String toString() {
-		String toReturn = super.toString() + " (Cat, " + super.getAge();
+		String toReturn = super.toString() + " (Dog, " + super.getAge();
 		if (super.canGetPregnant())
 			toReturn = toReturn + "F)";
 		else
@@ -21,7 +21,7 @@ public class Cat extends Animal
 	}
 	
 	public void randomise() {
-		super.randomiseAge(0, 14);
+		super.randomiseAge(0, 20); // dog lifespan?
 		super.randomiseName();
 		super.randomiseGender();
 	}

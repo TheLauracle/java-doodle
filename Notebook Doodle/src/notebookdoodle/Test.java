@@ -119,10 +119,22 @@ public class Test
 		debugPrint("Generating random animal");
 		Animal newRandom = new Animal(); // investigate later: does this leak memory? Just want a failsafe default value
 		
-		String newName = "Random animal test";
-		int newAge = (int)(Math.random() * 11);
-		newRandom = new Animal(newName, newAge);
 		
+		int randomSpecies = (int)(Math.random() * 2);
+		switch (randomSpecies) {
+			case 0: // Cat
+				newRandom = new Cat();
+				break;
+			case 1: // Animal
+				newRandom = new Animal();
+				break;
+			default: // Uh oh
+				debugPrint("Default case in randomSpecies switch - how?!");
+		}
+		
+		newRandom.randomise();
+		
+		debugPrint("New animal generated: " + newRandom.toString());
 		return newRandom;
 	}
 }
