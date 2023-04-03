@@ -1,7 +1,10 @@
-import java.util.Scanner;
+package notebookdoodle;
+import java.util.Arrays; // general use; pet shelter game
+import java.util.Scanner; // keyboard input
 
 public class Test
 {
+	public static int shelterSize = 5; // used in petShelter(), how many animals can fit in the shelter
 	public static boolean DEBUG = true; // used in debugPrint(), false = mute debug statements
 	
 	public static void main (String[] args) {
@@ -26,6 +29,9 @@ public class Test
 	public static void customPrint(String toPrint, boolean addNl) {
 		System.out.print(toPrint);
 		if (addNl) System.out.print("\n");
+	}
+	public static void customPrint(String toPrint) {
+		customPrint(toPrint, true);
 	}
 	
 	// debugPrint - If global variable DEBUG, then print debug message
@@ -52,6 +58,9 @@ public class Test
 			case 'M':
 				printMainMenu();
 				return true;
+			case '1':
+				petShelter(kb);
+				return true;
 			default:
 				debugPrint("Character not recognized. Continuing loop");
 				return true;
@@ -66,7 +75,39 @@ public class Test
 	public static void printMainMenu() {
 		customPrint("=== Menu: Enter the letter corresponding to your choice ===", true);
 		customPrint("M: Print this menu", true);
+		customPrint("1: Play pet shelter game", true);
 		customPrint("Q: Exit", true);
 	}
 	
+	// Function 1 - Pet shelter
+	/*
+	 * 
+	 */
+	// in: keyboard object
+	// outros before returning to menuContinue loop
+	public static void petShelter(Scanner kb) {
+		// debugPrint("petShelter init");
+		
+		// note: shelterSize global variable needs to be treated as a const here.
+		// can't remember atm how to note that in the code itself.
+		String petChoice = "";
+		Animal[] shelterAnimals = new Animal[shelterSize];
+		
+		customPrint("\n=== Welcome to the pet shelter! ===", true);
+		customPrint("Current shelter population: ".concat(shelterSize+""));
+		
+		
+		while (petChoice.length() < 0 || petChoice.charAt(0) != 'Q') {
+			
+			
+			
+			
+			customPrint("What would you like to do? (Q to quit, P to panic quit if something is wrong)", true);
+			petChoice = kb.next();
+			kb.nextLine();
+			
+			if (petChoice.charAt(0) == 'P') return; // in case the loop goes rogue
+		}
+		
+	}
 }
