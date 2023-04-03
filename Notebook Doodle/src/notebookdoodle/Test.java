@@ -1,5 +1,6 @@
 package notebookdoodle;
 import java.util.Arrays; // general use; pet shelter game
+import java.lang.Math.*; // general use; generate random animal
 import java.util.Scanner; // keyboard input
 
 public class Test
@@ -80,8 +81,11 @@ public class Test
 	}
 	
 	// Function 1 - Pet shelter
-	/*
-	 * 
+	/* For now, I want to generate random shelter cats / dogs / (others?)
+	 *  and let the user interact with them, maybe get them adopted / take in
+	 *  new animals.
+	 * If Java can interact with SQL in an easy way, maybe I could make
+	 *  a more useful version for actual animal intake / display / scheduling?
 	 */
 	// in: keyboard object
 	// outros before returning to menuContinue loop
@@ -90,24 +94,35 @@ public class Test
 		
 		// note: shelterSize global variable needs to be treated as a const here.
 		// can't remember atm how to note that in the code itself.
-		String petChoice = "";
+		String petChoice = " "; // needs to be at least 1 long for the first while loop check
 		Animal[] shelterAnimals = new Animal[shelterSize];
+		for (int i = 0; i < shelterSize; i++) {
+			shelterAnimals[i] = newRandomAnimal(); // fill shelterAnimals with random animals
+		}
 		
 		customPrint("\n=== Welcome to the pet shelter! ===", true);
 		customPrint("Current shelter population: ".concat(shelterSize+""));
+		customPrint(Arrays.toString(shelterAnimals));
 		
-		
-		while (petChoice.length() < 0 || petChoice.charAt(0) != 'Q') {
-			
-			
-			
-			
+		while (petChoice.length() > 0 && petChoice.charAt(0) != 'Q') {
 			customPrint("What would you like to do? (Q to quit, P to panic quit if something is wrong)", true);
 			petChoice = kb.next();
 			kb.nextLine();
 			
 			if (petChoice.charAt(0) == 'P') return; // in case the loop goes rogue
-		}
+		}	
+	}
+	
+	// newRandomAnimal - Generate a random Animal object with name, age, !! sub-class !!
+	// out: an Animal object that may actually be a Cat, Dog, etc object
+	public static Animal newRandomAnimal() {
+		debugPrint("Generating random animal");
+		Animal newRandom = new Animal(); // investigate later: does this leak memory? Just want a failsafe default value
 		
+		String newName = "Random animal test";
+		int newAge = (int)(Math.random() * 11);
+		newRandom = new Animal(newName, newAge);
+		
+		return newRandom;
 	}
 }
