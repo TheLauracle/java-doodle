@@ -1,5 +1,5 @@
 package notebookdoodle;
-import java.lang.Math.*;
+//import java.lang.Math.*;
 
 public class Animal
 {
@@ -43,7 +43,7 @@ public class Animal
 	// could add parameter for name length? meh..
 	public void randomiseName( ) {
 		int nameLength = (int)(Math.random()*6+1); // (of lowercase letters only)
-		name = name + (char)(Math.random()*26 + 65);
+		name = "" + (char)(Math.random()*26 + 65);
 		for (int i = 0; i < nameLength; i++) {
 			name = name + (char)(Math.random()*26 + 97);
 		}

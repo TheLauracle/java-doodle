@@ -1,6 +1,6 @@
 package notebookdoodle;
 import java.util.Arrays; // general use; pet shelter game
-import java.lang.Math.*; // general use; generate random animal
+//import java.lang.Math.*; // general use; generate random animal
 import java.util.Scanner; // keyboard input
 
 public class Test
@@ -106,6 +106,11 @@ public class Test
 		
 		while (petChoice.length() > 0 && petChoice.charAt(0) != 'Q') {
 			customPrint("What would you like to do? (Q to quit, P to panic quit if something is wrong)", true);
+			//1 : View shelter animals
+			//2 : View your fosters
+			//3 : Foster an animal
+			//4 : Get your fosters adopted
+			//5 : Go to a new shelter
 			petChoice = kb.next();
 			kb.nextLine();
 			
@@ -125,8 +130,8 @@ public class Test
 			case 0: // Cat
 				newRandom = new Cat();
 				break;
-			case 1: // Animal
-				newRandom = new Animal();
+			case 1: // Dog
+				newRandom = new Dog();
 				break;
 			default: // Uh oh
 				debugPrint("Default case in randomSpecies switch - how?!");
