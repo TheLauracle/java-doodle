@@ -1,5 +1,6 @@
 package notebookdoodle;
 import java.util.Arrays; // general use; pet shelter game
+import java.util.ArrayList; // general use; pet shelter game
 //import java.lang.Math.*; // general use; generate random animal
 import java.util.Scanner; // keyboard input
 
@@ -99,6 +100,7 @@ public class Test
 		for (int i = 0; i < shelterSize; i++) {
 			shelterAnimals[i] = newRandomAnimal(); // fill shelterAnimals with random animals
 		}
+		ArrayList<Animal> fosterAnimals = new ArrayList<Animal>();
 		
 		customPrint("\n=== Welcome to the pet shelter! ===", true);
 		customPrint("Current shelter population: ".concat(shelterSize+""));
@@ -106,15 +108,57 @@ public class Test
 		
 		while (petChoice.length() > 0 && petChoice.charAt(0) != 'Q') {
 			customPrint("What would you like to do? (Q to quit, P to panic quit if something is wrong)", true);
-			//1 : View shelter animals
-			//2 : View your fosters
-			//3 : Foster an animal
-			//4 : Get your fosters adopted
-			//5 : Go to a new shelter
+			customPrint("1 : View shelter animals");
+			customPrint("2 : View your fosters");
+			customPrint("3 : Foster an animal");
+			customPrint("4 : Get your fosters adopted");
+			customPrint("5 : Go to a new shelter");
 			petChoice = kb.next();
 			kb.nextLine();
 			
 			if (petChoice.charAt(0) == 'P') return; // in case the loop goes rogue
+			switch (petChoice.charAt(0)) {
+				case 'Q': 
+					customPrint("Goodbye from petShelter, back to the main menu!");
+					return;
+				case '1': // view shelter animals
+					customPrint(Arrays.toString(shelterAnimals));
+					break;
+				case '2': // view your fosters
+					if (fosterAnimals.size() < 1) 
+						{
+							customPrint("Oops, you have no fosters yet!"); 
+							break;
+						}
+					customPrint(fosterAnimals.toString());
+					break;
+				case '3': // foster an animal
+					customPrint("Which animal would you like to foster? (Number 1-" + shelterSize + ")");
+					int newFoster = kb.nextInt();
+					kb.nextLine();
+					if (newFoster < 1 || newFoster > shelterSize) {
+						customPrint("Oops! You went to the shelter, but there was no pet at that kennel number.");
+						break;
+					}
+					
+					// add animal to foster arraylist
+					// TODO
+					
+					// randomize new animal in shelter array
+					// TODO
+					
+					break;
+				case '4': // get your fosters adopted
+					// remove animal from foster arraylist
+					// TODO
+					break;
+				case '5': // go to a new shelter
+					// randomize all animals in shelter array
+					// TODO
+					break;
+				default:
+					customPrint("I didn't recognize that choice, sorry!");
+			}
 		}	
 	}
 	
