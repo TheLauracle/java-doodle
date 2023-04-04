@@ -81,7 +81,7 @@ public class Test
 		customPrint("Q: Exit", true);
 	}
 	
-	// Function 1 - Pet shelter
+	//------------------------ Function 1 - Pet shelter ------------------------
 	/* For now, I want to generate random shelter cats / dogs / (others?)
 	 *  and let the user interact with them, maybe get them adopted / take in
 	 *  new animals.
@@ -119,7 +119,7 @@ public class Test
 			if (petChoice.charAt(0) == 'P') return; // in case the loop goes rogue
 			switch (petChoice.charAt(0)) {
 				case 'Q': 
-					customPrint("Goodbye from petShelter, back to the main menu!");
+					customPrint("Goodbye from the Pet Shelter, back to the main menu!");
 					return;
 				case '1': // view shelter animals
 					customPrint(Arrays.toString(shelterAnimals));
@@ -134,31 +134,53 @@ public class Test
 					break;
 				case '3': // foster an animal
 					customPrint("Which animal would you like to foster? (Number 1-" + shelterSize + ")");
-					int newFoster = kb.nextInt();
+					int newFoster = kb.nextInt() - 1;
 					kb.nextLine();
-					if (newFoster < 1 || newFoster > shelterSize) {
+					if (newFoster < 0 || newFoster >= shelterSize) {
 						customPrint("Oops! You went to the shelter, but there was no pet at that kennel number.");
 						break;
 					}
 					
 					// add animal to foster arraylist
-					// TODO
+					fosterAnimals.add(shelterAnimals[newFoster]);
 					
 					// randomize new animal in shelter array
-					// TODO
+					shelterAnimals[newFoster] = newRandomAnimal(); // don't want to randomise the one we just got
 					
+					customPrint("Added to your foster animals list! [2] to see all of your fosters.");
 					break;
 				case '4': // get your fosters adopted
+					if (fosterAnimals.size() < 1) {
+						customPrint("You have no foster animals. Why don't you get one from the shelter?");
+						break;
+					}
 					// remove animal from foster arraylist
-					// TODO
+					customPrint("Which animal would you like to get adopted? (Number 1-" + fosterAnimals.size() + ")");
+					int newAdopt = kb.nextInt() - 1;
+					kb.nextLine();
+					if (newAdopt < 0 || newAdopt >= fosterAnimals.size()) {
+						customPrint("Oops! You looked through your foster animals and realized you don't have one with that kennel number.");
+						break;
+					}
+					
+					// Do I need to destroy the memory of this object or can I trust the garbage collector to get it?
+					// In a "full product" version I probably would try to explicitly destroy it just to be safe
+					fosterAnimals.remove(newAdopt);
+					
 					break;
 				case '5': // go to a new shelter
 					// randomize all animals in shelter array
-					// TODO
+					customPrint("You go to a new shelter...");
+					for (int i = 0; i < shelterSize; i++) { // same possible weirdness with memory?
+						shelterAnimals[i] = newRandomAnimal();
+					}
+					customPrint("New shelter animals: ", false);
+					customPrint(Arrays.toString(shelterAnimals));
 					break;
 				default:
 					customPrint("I didn't recognize that choice, sorry!");
 			}
+			customPrint("===============");
 		}	
 	}
 	
@@ -186,4 +208,5 @@ public class Test
 		debugPrint("New animal generated: " + newRandom.toString());
 		return newRandom;
 	}
+	// ------------------------ End Function 1 ------------------------
 }
