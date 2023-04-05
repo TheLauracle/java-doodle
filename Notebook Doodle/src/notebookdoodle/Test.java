@@ -7,7 +7,7 @@ import java.util.Scanner; // keyboard input
 public class Test
 {
 	public static int shelterSize = 5; // used in petShelter(), how many animals can fit in the shelter
-	public static boolean DEBUG = true; // used in debugPrint(), false = mute debug statements
+	public static boolean showDebug = true; // used in debugPrint(), false = mute debug statements
 	
 	public static void main (String[] args) {
 		debugPrint("Main init");
@@ -41,7 +41,7 @@ public class Test
 	// in: string too print
 	// out: prints to console; auto add newline
 	public static void debugPrint(String toPrint) {
-		if (DEBUG) System.out.println(toPrint);
+		if (showDebug) System.out.println(toPrint);
 	}
 	
 	// menuContinue - Main menu loop, this is the "true main"
@@ -75,18 +75,34 @@ public class Test
 	//    this should probably have its own text area.
 	// out: prints the menu to customPrint
 	public static void printMainMenu() {
-		customPrint("=== Menu: Enter the letter corresponding to your choice ===", true);
-		customPrint("M: Print this menu", true);
-		customPrint("1: Play pet shelter game", true);
-		customPrint("Q: Exit", true);
+		customPrint("=== Menu: Enter the letter corresponding to your choice ===");
+		customPrint("M : Print this menu");
+		//customPrint("O : Configure global options");
+		customPrint("1 : Play pet shelter game");
+		customPrint("Q : Exit");
 	}
 	
+	// tedious grunt work, I'll do this on a calmer day
+	/*
+	public static void configureOptions(Scanner kb) {
+		String optChoice = " ";
+		while (optChoice.length() > 0 && optChoice.charAt(0) != 'Q') {
+			customPrint("1 : Show debug prints: " + showDebug);
+			customPrint("2 : Pet game shelter size: " + shelterSize);
+		}
+	}
+	/*
+	
+	
+	/* Should I put these in separate .java files?
+	 * But then I can't use customPrint() in them without
+	 * creating a circular dependency, and that's annoying
+	 * (Even though without a GUI, it's the same as println)
+	 */
 	//------------------------ Function 1 - Pet shelter ------------------------
 	/* For now, I want to generate random shelter cats / dogs / (others?)
 	 *  and let the user interact with them, maybe get them adopted / take in
 	 *  new animals.
-	 * If Java can interact with SQL in an easy way, maybe I could make
-	 *  a more useful version for actual animal intake / display / scheduling?
 	 */
 	// in: keyboard object
 	// outros before returning to menuContinue loop
