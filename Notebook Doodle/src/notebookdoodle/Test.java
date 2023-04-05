@@ -79,6 +79,7 @@ public class Test
 		customPrint("M : Print this menu");
 		//customPrint("O : Configure global options");
 		customPrint("1 : Play pet shelter game");
+		customPrint("2 : Play evil hangman");
 		customPrint("Q : Exit");
 	}
 	
@@ -225,4 +226,34 @@ public class Test
 		return newRandom;
 	}
 	// ------------------------ End Function 1 ------------------------
+	
+	//------------------------ Function 2 - Evil hangman ------------------------
+	/* Evil hangman: Similar to normal hangman game, the user guesses
+	 * the hidden word one letter at a time. Except it's evil so the word
+	 * actually isn't pre-chosen! The game starts with a set of possible words,
+	 * and as the user guesses, the game will narrow the set down to make
+	 * sure the user's guess is wrong!
+	 */
+	public static void evilHangman(Scanner kb) {
+		// features: pointless recursion? set, or arraylist?
+		
+		// step 1: user selects (or randomises) difficulty
+		// difficulty determines word size and number of lives
+		
+		// step 2: create a copy of the set of words of chosen length
+		// (share pointers to save memory, except the set object itself)
+		
+		// step 3: print the hangman spaces, loop: what letter choice?
+		
+		// create tmp-set
+		// search dict-set:
+		// Any words that match user's guess get removed from dict-set
+		//  and moved to tmp-set.
+		// If dict-set isn't empty, user loses a life.
+		// If dict-set is empty, dict-set = tmp-set and user's guess is added.
+		
+		// repeat until win or loss; show the word; "play again?" -> loop
+		
+	}
+	// ------------------------ End Function 2 ------------------------
 }
