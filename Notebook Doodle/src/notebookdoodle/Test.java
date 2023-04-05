@@ -3,11 +3,13 @@ import java.util.Arrays; // general use; pet shelter game
 import java.util.ArrayList; // general use; pet shelter game
 //import java.lang.Math.*; // general use; generate random animal
 import java.util.Scanner; // keyboard input
+import java.util.TreeSet; // evil hangman game
 
 public class Test
 {
 	public static int shelterSize = 5; // used in petShelter(), how many animals can fit in the shelter
 	public static boolean showDebug = true; // used in debugPrint(), false = mute debug statements
+	public static TreeSet<String> hangmanDict = new TreeSet<String>(); // all words for evil hangman game
 	
 	public static void main (String[] args) {
 		debugPrint("Main init");
@@ -237,6 +239,7 @@ public class Test
 	public static void evilHangman(Scanner kb) {
 		// features: pointless recursion? set, or arraylist?
 		
+		// TODO
 		// step 1: user selects (or randomises) difficulty
 		// difficulty determines word size and number of lives
 		
@@ -255,5 +258,14 @@ public class Test
 		// repeat until win or loss; show the word; "play again?" -> loop
 		
 	}
+	
+	// populate hangman dictionary
+	// this should only need to be called once
+	public static void hangmanInit() {
+		//hangmanDict.add("abc");
+		
+		// TODO
+	}
+	
 	// ------------------------ End Function 2 ------------------------
 }
