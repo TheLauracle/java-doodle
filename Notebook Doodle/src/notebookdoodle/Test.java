@@ -389,10 +389,27 @@ public class Test
 	}
 	
 	// updateHint: fill out the hint (ex: _ _ L A _) with current user guess
-	// TODO; requires further narrowing
+	// Note - modifies currentDict further
 	public static String updateHint(String currentHint, TreeSet<String> currentDict, char userGuess) {
 		String toReturn = currentHint;
-		// TODO
+		
+		/* Sort words into mini-sets based on where the userGuess occurs
+		 * ex: if userGuess is 'E', then "ease, ever, eyes, elks" would get split up
+		 * and the biggest list "ever, eyes" would be chosen
+		 */
+		// It seems like there is a better way to do this
+		ArrayList<TreeSet<String>> miniSets = new ArrayList<TreeSet<String>>();
+		for (String tmpWord : currentDict) {
+			//TODO
+			// iterate through existing miniSets
+			// if all instances of userGuess in tmpWord are @ same index of userGuess in miniSet.first(), add to that miniSet and break
+			//  else, add new miniSet and make tmpWord the first entry in tahat set
+		}
+		
+		// TODO: Actually, I could move that sorting to hangmanGuess
+		// and it would solve *most* of the optimization problem
+		// (but it could really slow down the program!)
+		
 		return toReturn;
 	}
 	
