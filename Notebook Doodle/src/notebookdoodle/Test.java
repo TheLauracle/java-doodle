@@ -240,13 +240,17 @@ public class Test
 	 * sure the user's guess is wrong!
 	 */
 	//in: Keyboard object
+	// ideas for future development: handling spaces better, guessing a sequence of letters at a time, drawing the hangman
 	public static void evilHangman(Scanner kb) {
 		// features: pointless recursion? set, or arraylist?
+		// assumptions: currentHangmanLength is always at least 1,
+		//   a space in the winning word counts as a letter
 		debugPrint("Default hangman values for testing");
 		int currentHangmanLength = 3;
 		int currentHangmanLives = 3;
 		boolean gameOver = false;
 		char userChoice = ' ';
+		String currentHint = "_";
 		
 		// TODO
 		// step 1: user selects (or randomises) difficulty
@@ -254,26 +258,21 @@ public class Test
 		currentHangmanLength = 3; // to be replaced with user selection
 		currentHangmanLives = 3;
 		
+		// done
 		// step 2: create a copy of the set of words of chosen length
 		// (share pointers to save memory, except the set object itself)
 		TreeSet<String> currentDict = hangmanOfLength(currentHangmanLength);
+		// hint starts as blanks _ _ _ ...
+		currentHint = "_";
+		for (int i=0; i<currentHangmanLength; i++) {
+			currentHint = currentHint + " _";
+		}
 		
 		// step 3: print the hangman spaces, loop: what letter choice?
 		while (!gameOver) {
-			//TODO - replace this to include correct guesses
-			for (int i=0; i<currentHangmanLength; i++) {
-				customPrint("_", false);
-			}
-			customPrint("\nWhat letter will you guess next?: ", false);
-			
-			// TODO
-			// create tmp-set
-			// search dict-set:
-			// Any words that match user's guess get removed from dict-set
-			//  and moved to tmp-set.
-			// If dict-set isn't empty, user loses a life.
-			// If dict-set is empty, dict-set = tmp-set and user's guess is added.
-			
+			customPrint(currentHint);
+			// TODO: print guesses the user has tried so far, lives remaining
+			customPrint("What letter will you guess next?: ", false);
 			
 			String tmpNextLine = kb.nextLine();
 			if (tmpNextLine.length() > 0) userChoice = tmpNextLine.charAt(0);
@@ -284,6 +283,12 @@ public class Test
 					gameOver = true;
 				}
 			}
+			
+			// TODO
+			// hangmanGuess() -> lose a life or not
+			// if guess is accurate, update the hint (and toUpperCase)
+			// tell the user the result
+						
 		}
 		
 		
@@ -310,6 +315,29 @@ public class Test
 			if (tmpWord.length() == wordLength) toReturn.add(tmpWord);
 		}
 		return toReturn;
+	}
+	
+	/* hangmanGuess: narrow the working set of hangman words down so that the user guess is wrong
+	* if unsuccessful, return true (user guess is correct)
+	* else return false (user loses a life; possible words are narrowed down)
+	*/
+	// in: set of possible words in the current game, letter the user guessed
+	// out: modifies currentDict if possible to not contain the guess, *or* returns true for correct guess
+	// note: case does not matter
+	public static boolean hangmanGuess(TreeSet<String> currentDict, char userGuess) {
+		TreeSet<String> proposedDict = new TreeSet<String>();
+		for (String tmpWord : currentDict) {
+			if (!tmpWord.toUpperCase().contains((userGuess+"").toUpperCase())) {
+				proposedDict.add(tmpWord);
+			}
+		}
+		
+		// all words in currentDict contained the guess
+		if (proposedDict.isEmpty()) return true;
+		
+		// or, successfully narrowed down currentDict to words that don't contain the guess
+		currentDict = proposedDict;		
+		return false;
 	}
 	
 	// ------------------------ End Function 2 ------------------------
