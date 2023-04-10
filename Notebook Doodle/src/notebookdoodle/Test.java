@@ -65,6 +65,9 @@ public class Test
 			case '1':
 				petShelter(kb);
 				return true;
+			case '2':
+				evilHangman(kb);
+				return true;
 			default:
 				debugPrint("Character not recognized. Continuing loop");
 				return true;
@@ -236,35 +239,77 @@ public class Test
 	 * and as the user guesses, the game will narrow the set down to make
 	 * sure the user's guess is wrong!
 	 */
+	//in: Keyboard object
 	public static void evilHangman(Scanner kb) {
 		// features: pointless recursion? set, or arraylist?
+		debugPrint("Default hangman values for testing");
+		int currentHangmanLength = 3;
+		int currentHangmanLives = 3;
+		boolean gameOver = false;
+		char userChoice = ' ';
 		
 		// TODO
 		// step 1: user selects (or randomises) difficulty
 		// difficulty determines word size and number of lives
+		currentHangmanLength = 3; // to be replaced with user selection
+		currentHangmanLives = 3;
 		
 		// step 2: create a copy of the set of words of chosen length
 		// (share pointers to save memory, except the set object itself)
+		TreeSet<String> currentDict = hangmanOfLength(currentHangmanLength);
 		
 		// step 3: print the hangman spaces, loop: what letter choice?
+		while (!gameOver) {
+			//TODO - replace this to include correct guesses
+			for (int i=0; i<currentHangmanLength; i++) {
+				customPrint("_", false);
+			}
+			customPrint("\nWhat letter will you guess next?: ", false);
+			
+			// TODO
+			// create tmp-set
+			// search dict-set:
+			// Any words that match user's guess get removed from dict-set
+			//  and moved to tmp-set.
+			// If dict-set isn't empty, user loses a life.
+			// If dict-set is empty, dict-set = tmp-set and user's guess is added.
+			
+			
+			String tmpNextLine = kb.nextLine();
+			if (tmpNextLine.length() > 0) userChoice = tmpNextLine.charAt(0);
+			else {
+				customPrint("Press enter again to confirm quit");
+				if (kb.nextLine().length() < 1) {
+					customPrint("Quitting game");
+					gameOver = true;
+				}
+			}
+		}
 		
-		// create tmp-set
-		// search dict-set:
-		// Any words that match user's guess get removed from dict-set
-		//  and moved to tmp-set.
-		// If dict-set isn't empty, user loses a life.
-		// If dict-set is empty, dict-set = tmp-set and user's guess is added.
 		
-		// repeat until win or loss; show the word; "play again?" -> loop
+		// TODO
+		// print win or loss; show the word; "play again?" -> call evilHangman() again
 		
 	}
 	
 	// populate hangman dictionary
 	// this should only need to be called once
 	public static void hangmanInit() {
-		//hangmanDict.add("abc");
+		hangmanDict.add("bat");
+		hangmanDict.add("cat");
+		hangmanDict.add("cot");
+		hangmanDict.add("Filter me");
 		
 		// TODO
+	}
+	
+	// return a new set for hangman but only with words of the desired length
+	public static TreeSet<String> hangmanOfLength(int wordLength){
+		TreeSet<String> toReturn = new TreeSet<String>();
+		for (String tmpWord : hangmanDict) {
+			if (tmpWord.length() == wordLength) toReturn.add(tmpWord);
+		}
+		return toReturn;
 	}
 	
 	// ------------------------ End Function 2 ------------------------
