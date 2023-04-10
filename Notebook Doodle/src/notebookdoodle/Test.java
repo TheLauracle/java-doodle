@@ -332,31 +332,68 @@ public class Test
 	/* hangmanGuess: narrow the working set of hangman words down so that the user guess is wrong
 	* if unsuccessful, return true (user guess is correct)
 	* else return false (user loses a life; possible words are narrowed down)
+	* note: possible words gets narrowed down further in updateHint()
 	*/
 	// in: set of possible words in the current game, letter the user guessed
 	// out: modifies currentDict if possible to not contain the guess, *or* returns true for correct guess
 	// note: case does not matter
 	public static boolean hangmanGuess(TreeSet<String> currentDict, char userGuess) {
-		TreeSet<String> proposedDict = new TreeSet<String>();
-		for (String tmpWord : currentDict) {
-			if (!tmpWord.toUpperCase().contains((userGuess+"").toUpperCase())) {
-				proposedDict.add(tmpWord);
+		if (currentDict.isEmpty()) {
+			debugPrint("HangmanGuess error: currentDict is empty somehow");
+			return false;
+		}
+		
+		int biggestSetSize = -1; // for selecting which space the guess goes into
+		int biggestSetIndex = -1;
+		
+		userGuess = (userGuess+"").toUpperCase().charAt(0); // NOTE - goofy, but easy, toUpperCase - would probably be better to do this before calling the method
+		
+		int wordLength = currentDict.first().length();
+		ArrayList<TreeSet<String>> proposedDicts = new ArrayList<TreeSet<String>>();
+		for (int i=0; i<wordLength; i++) {
+			//proposedDicts.add(new TreeSet<String>()); // backup idea in case the garbage collector gets messed up, but faster to not access like this every time in the foreach loop
+			TreeSet<String> tmpSet = new TreeSet<String>();
+			
+			for (String tmpWord : currentDict) {
+				if (tmpWord.toUpperCase().charAt(i) != userGuess) { // NOTE - inefficient to do toUpperCase() here, should do it in hangmanInit when I get to it
+					//proposedDicts.get(i).add(tmpWord); // backup
+					tmpSet.add(tmpWord);
+				}
 			}
+			
+			proposedDicts.add(tmpSet);
+			if (tmpSet.size() > biggestSetSize) { // 'this position has the most possibilities for making the guess wrong'
+				biggestSetSize = tmpSet.size();
+				biggestSetIndex = i;
+			}
+			
+			/* WONTFIX - This isn't 100% perfect because we'd want to further narrow the list to the least guesses for repeat letters
+			*  ex: Guess is 'e', then the set "eeeA, eeeB" currently gets chosen over "ABCe" despite being easier to guess
+			*  But the algorithm to fix that would have to be super complex
+			*  Further narrow the list to words with most unique letters? Or fewest of the guessed letter?
+			*  ex: Would need to split hairs to decide between "ABee, BCee, ACee, ABCe" vs "eAAA, eBBB, eCCC, eABC"
+			*  To save memory and processing power, I won't be addressing it for this demo.
+			*  
+			*  But in real life, I would solve this by further sorting each set in proposedDicts into
+			*  mini-sets based on which indices the userGuess appears in, and pick only the mini-set from that
+			*  sort with the most average unique characters per entry, to take the spot in proposedDicts[i].
+			*/
 		}
 		
 		// all words in currentDict contained the guess
-		if (proposedDict.isEmpty()) return true;
+		if (proposedDicts.get(biggestSetIndex).isEmpty()) return true;
 		
 		// or, successfully narrowed down currentDict to words that don't contain the guess
-		currentDict = proposedDict;
-		
-		// TODO
-		// oops !!! we need to only return a list of words with that guess in the same spot!!
-		// idea: proposedDict should be an array of TreeSets, and success stored as an index
-		// while building proposedDicts, keep track of the index of the biggest set within the array
-		// at the end, we'll set the currentDict equal to the biggest proposedDict set
-		
+		currentDict = proposedDicts.get(biggestSetIndex);
 		return false;
+	}
+	
+	// updateHint: fill out the hint (ex: _ _ L A _) with current user guess
+	// TODO; requires further narrowing
+	public static String updateHint(String currentHint, TreeSet<String> currentDict, char userGuess) {
+		String toReturn = currentHint;
+		// TODO
+		return toReturn;
 	}
 	
 	// ------------------------ End Function 2 ------------------------
