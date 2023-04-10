@@ -242,7 +242,6 @@ public class Test
 	//in: Keyboard object
 	// ideas for future development: handling spaces better, guessing a sequence of letters at a time, drawing the hangman
 	public static void evilHangman(Scanner kb) {
-		// features: pointless recursion? set, or arraylist?
 		// assumptions: currentHangmanLength is always at least 1,
 		//   a space in the winning word counts as a letter
 		debugPrint("Default hangman values for testing");
@@ -251,6 +250,7 @@ public class Test
 		boolean gameOver = false;
 		char userChoice = ' ';
 		String currentHint = "_";
+		boolean gameWin = false;
 		
 		// TODO
 		// step 1: user selects (or randomises) difficulty
@@ -274,27 +274,39 @@ public class Test
 			// TODO: print guesses the user has tried so far, lives remaining
 			customPrint("What letter will you guess next?: ", false);
 			
+			// set user input (or quit early)
 			String tmpNextLine = kb.nextLine();
 			if (tmpNextLine.length() > 0) userChoice = tmpNextLine.charAt(0);
 			else {
 				customPrint("Press enter again to confirm quit");
 				if (kb.nextLine().length() < 1) {
 					customPrint("Quitting game");
+					gameWin = false;
 					gameOver = true;
 				}
 			}
 			
-			// TODO
-			// hangmanGuess() -> lose a life or not
-			// if guess is accurate, update the hint (and toUpperCase)
-			// tell the user the result
-						
+			// checking if guess is correct
+			if (hangmanGuess(currentDict, userChoice)) {
+				customPrint("Your guess is correct!");
+				
+				// TODO: update the hint; toUpperCase
+				// check if the whole word is guessed -> gameWin = true, gameOver = true
+			} else {
+				currentHangmanLives--;
+				customPrint("Your guess is incorrect! New lives: " + currentHangmanLives);
+				if (currentHangmanLives < 1) {
+					gameWin = false;
+					gameOver = true;
+				}
+			}
 		}
-		
 		
 		// TODO
 		// print win or loss; show the word; "play again?" -> call evilHangman() again
-		
+		// technically this could lead to stack memory problems
+		// to fix that, I could just move the "play again?" prompt to the main menu
+		// actually I might do that
 	}
 	
 	// populate hangman dictionary
@@ -336,7 +348,14 @@ public class Test
 		if (proposedDict.isEmpty()) return true;
 		
 		// or, successfully narrowed down currentDict to words that don't contain the guess
-		currentDict = proposedDict;		
+		currentDict = proposedDict;
+		
+		// TODO
+		// oops !!! we need to only return a list of words with that guess in the same spot!!
+		// idea: proposedDict should be an array of TreeSets, and success stored as an index
+		// while building proposedDicts, keep track of the index of the biggest set within the array
+		// at the end, we'll set the currentDict equal to the biggest proposedDict set
+		
 		return false;
 	}
 	
