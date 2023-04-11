@@ -288,6 +288,8 @@ public class Test
 					customPrint("Quitting game");
 					gameWin = false;
 					gameOver = true;
+					
+					return; // Quit instantly. NOTE - may want to revisit and go to game over screen instead
 				}
 			}
 			
@@ -324,6 +326,8 @@ public class Test
 		hangmanDict.add("BAT");
 		hangmanDict.add("CAT");
 		hangmanDict.add("COT");
+		hangmanDict.add("CCC");
+		hangmanDict.add("TTT");
 		hangmanDict.add("FILTER ME");
 		
 		// TODO
@@ -361,7 +365,7 @@ public class Test
 			//proposedDicts.add(new TreeSet<String>()); // backup idea in case the garbage collector gets messed up, but faster to not access like this every time in the foreach loop
 			TreeSet<String> tmpSet = new TreeSet<String>();
 			
-			for (String tmpWord : currentDict) {
+			for (String tmpWord : currentDict) {				
 				if (tmpWord.toUpperCase().charAt(i) != userGuess) { // NOTE - inefficient to do toUpperCase() here, should do it in hangmanInit when I get to it
 					//proposedDicts.get(i).add(tmpWord); // backup
 					tmpSet.add(tmpWord);
@@ -387,11 +391,15 @@ public class Test
 			*/
 		}
 		
+		// TODO - BUG: it's picking anything that isn't an exact match, and treating that like a wrong guess.
+		//   If there's any match at all, then it has to be a correct guess if this list is picked.
+		
 		// all words in currentDict contained the guess
 		if (proposedDicts.get(biggestSetIndex).isEmpty()) return true;
 		
 		// or, successfully narrowed down currentDict to words that don't contain the guess
-		currentDict = proposedDicts.get(biggestSetIndex);
+		currentDict = proposedDicts.get(biggestSetIndex); // TODO - BUG: This isn't setting the pointer in the original method
+															// I forgot this isn't C, will need to modify currentDict some other way
 		debugPrint("hangmanGuess dict after narrowing " + currentDict.toString());
 		return false;
 	}
