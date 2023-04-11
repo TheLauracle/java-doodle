@@ -400,11 +400,29 @@ public class Test
 		// It seems like there is a better way to do this
 		ArrayList<TreeSet<String>> miniSets = new ArrayList<TreeSet<String>>();
 		for (String tmpWord : currentDict) {
-			//TODO
-			// iterate through existing miniSets
-			// if all instances of userGuess in tmpWord are @ same index of userGuess in miniSet.first(), add to that miniSet and break
-			//  else, add new miniSet and make tmpWord the first entry in tahat set
+			boolean added = false;
+			for (int i=0; i<miniSets.size() && !added; i++) { // iterate through existing miniSets
+				String firstWord = miniSets.get(i).first();
+				added = true;
+				for (int j=0; j<tmpWord.length() && added; j++) { // iterate through chars in word
+					if ((tmpWord.charAt(j) == userGuess) != (firstWord.charAt(j) == userGuess)) {
+						// one word has the guess at this spot but the other does not
+						added = false;
+					}
+				}
+				if (added) miniSets.get(i).add(tmpWord);
+			}
+			if (!added) { // no matches in current miniSets
+				miniSets.add(new TreeSet<String>());
+				miniSets.get(miniSets.size()).add(tmpWord);
+			}
 		}
+		
+		// TODO: pick the miniSet with the most possibilities
+		
+		
+		// TODO: replace() chars in hint string with user guess
+		
 		
 		// TODO: Actually, I could move that sorting to hangmanGuess
 		// and it would solve *most* of the optimization problem
