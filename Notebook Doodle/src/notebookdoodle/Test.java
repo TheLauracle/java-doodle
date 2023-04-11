@@ -299,7 +299,7 @@ public class Test
 			if (hangmanGuess(currentDict, userChoice)) {
 				customPrint("Your guess is correct!");
 				
-				updateHint(currentHint, currentDict, userChoice);
+				currentHint = updateHint(currentHint, currentDict, userChoice);
 				
 				// TODO
 				// check if the whole word is guessed -> gameWin = true, gameOver = true
@@ -359,24 +359,48 @@ public class Test
 		int biggestSetSize = -1; // for selecting which space the guess goes into
 		int biggestSetIndex = -1;
 		
-		int wordLength = currentDict.first().length();
-		ArrayList<TreeSet<String>> proposedDicts = new ArrayList<TreeSet<String>>();
-		for (int i=0; i<wordLength; i++) {
-			//proposedDicts.add(new TreeSet<String>()); // backup idea in case the garbage collector gets messed up, but faster to not access like this every time in the foreach loop
-			TreeSet<String> tmpSet = new TreeSet<String>();
-			
-			for (String tmpWord : currentDict) {				
-				if (tmpWord.toUpperCase().charAt(i) != userGuess) { // NOTE - inefficient to do toUpperCase() here, should do it in hangmanInit when I get to it
-					//proposedDicts.get(i).add(tmpWord); // backup
-					tmpSet.add(tmpWord);
+		boolean toReturn = false; // was the guess correct
+		
+		// wait... something's not right lol
+		// step 1: EaaaE, aaaaa, EEbbE, EEcdE -> [EaaaE] [aaaaa] [EEbbE, EEcdE]
+		// step 2: pick [EEbbE, EEcdE]
+		// I think what I wrote in userGuess does that entire thing already
+		
+		/* Sort words into mini-sets based on where the userGuess occurs
+		 * ex: if userGuess is 'E', then "ease, ever, eyes, elks" would get split up
+		 * and the biggest list "ever, eyes" would be chosen
+		 */
+		// It seems like there is a better way to do this
+		ArrayList<TreeSet<String>> miniSets = new ArrayList<TreeSet<String>>();
+		for (String tmpWord : currentDict) {
+			boolean added = false;
+			for (int j=0; j<miniSets.size() && !added; j++) { // iterate through existing miniSets
+				String firstWord = miniSets.get(j).first();
+				added = true;
+				for (int l=0; l<tmpWord.length() && added; l++) { // iterate through chars in word
+					if ((tmpWord.charAt(l) == userGuess) != (firstWord.charAt(l) == userGuess)) {
+						// one word has the guess at this spot but the other does not
+						added = false;
+					}
 				}
+				if (added) miniSets.get(j).add(tmpWord);
 			}
-			
-			proposedDicts.add(tmpSet);
-			if (tmpSet.size() > biggestSetSize) { // 'this position has the most possibilities for making the guess wrong'
-				biggestSetSize = tmpSet.size();
-				biggestSetIndex = i;
+			if (!added) { // no matches in current miniSets
+				miniSets.add(new TreeSet<String>());
+				miniSets.get(miniSets.size()-1).add(tmpWord);
 			}
+		}
+		
+		// pick biggest miniSet to be our new dict
+		for (int k=0; k<miniSets.size(); k++) {
+			if (miniSets.get(k).size() > biggestSetSize) {
+				biggestSetSize = miniSets.get(k).size();
+				biggestSetIndex = k;
+			}
+		}
+		
+		debugPrint("MiniSets: " + miniSets.toString());
+		debugPrint("Biggest set index " + biggestSetIndex);
 			
 			/* WONTFIX - This isn't 100% perfect because we'd want to further narrow the list to the least guesses for repeat letters
 			*  ex: Guess is 'e', then the set "eeeA, eeeB" currently gets chosen over "ABCe" despite being easier to guess
@@ -389,19 +413,17 @@ public class Test
 			*  mini-sets based on which indices the userGuess appears in, and pick only the mini-set from that
 			*  sort with the most average unique characters per entry, to take the spot in proposedDicts[i].
 			*/
-		}
-		
-		// TODO - BUG: it's picking anything that isn't an exact match, and treating that like a wrong guess.
-		//   If there's any match at all, then it has to be a correct guess if this list is picked.
-		
+			
 		// all words in currentDict contained the guess
-		if (proposedDicts.get(biggestSetIndex).isEmpty()) return true;
+		if (miniSets.get(biggestSetIndex).isEmpty()) return true;
 		
 		// or, successfully narrowed down currentDict to words that don't contain the guess
-		currentDict = proposedDicts.get(biggestSetIndex); // TODO - BUG: This isn't setting the pointer in the original method
-															// I forgot this isn't C, will need to modify currentDict some other way
+		// OR, the bigger array is one in which the guess was correct
+		currentDict.clear();
+		currentDict.addAll(miniSets.get(biggestSetIndex));
+		
 		debugPrint("hangmanGuess dict after narrowing " + currentDict.toString());
-		return false;
+		return currentDict.first().contains(userGuess+"");
 	}
 	
 	// updateHint: fill out the hint (ex: _ _ L A _) with current user guess
@@ -409,55 +431,16 @@ public class Test
 	public static String updateHint(String currentHint, TreeSet<String> currentDict, char userGuess) {
 		String toReturn = currentHint;
 		
-		/* Sort words into mini-sets based on where the userGuess occurs
-		 * ex: if userGuess is 'E', then "ease, ever, eyes, elks" would get split up
-		 * and the biggest list "ever, eyes" would be chosen
-		 */
-		// It seems like there is a better way to do this
-		ArrayList<TreeSet<String>> miniSets = new ArrayList<TreeSet<String>>();
-		for (String tmpWord : currentDict) {
-			boolean added = false;
-			for (int i=0; i<miniSets.size() && !added; i++) { // iterate through existing miniSets
-				String firstWord = miniSets.get(i).first();
-				added = true;
-				for (int j=0; j<tmpWord.length() && added; j++) { // iterate through chars in word
-					if ((tmpWord.charAt(j) == userGuess) != (firstWord.charAt(j) == userGuess)) {
-						// one word has the guess at this spot but the other does not
-						added = false;
-					}
-				}
-				if (added) miniSets.get(i).add(tmpWord);
-			}
-			if (!added) { // no matches in current miniSets
-				miniSets.add(new TreeSet<String>());
-				miniSets.get(miniSets.size()).add(tmpWord);
-			}
-		}
-		
-		// pick biggest miniSet to be our new dict
-		int biggestSetIndex = 0;
-		int biggestSetSize = -1;
-		for (int i=0; i<miniSets.size(); i++) {
-			if (miniSets.get(i).size() > biggestSetSize) {
-				biggestSetSize = miniSets.get(i).size();
-				biggestSetIndex = i;
-			}
-		}
-		
-		currentDict = miniSets.get(biggestSetIndex); // voila!!!
-		
 		// replace chars in hint string with user guess
 		String currentFirst = currentDict.first();
 		for (int i=0; i<currentFirst.length(); i++) {
 			if (currentFirst.charAt(i) == userGuess) {
 				// "EasE" -> "E _ _ E"
-				toReturn = toReturn.substring(0, i*2) + userGuess + toReturn.substring(i*2);
+				toReturn = toReturn.substring(0, i*2) + userGuess + toReturn.substring((i*2) + 1);
 			}
 		}
 		
-		// TODO: Actually, I could move that sorting to hangmanGuess
-		// and it would solve *most* of the optimization problem
-		// (but it could really slow down the program!)
+		debugPrint("toReturn : " + toReturn);
 		
 		return toReturn;
 	}
