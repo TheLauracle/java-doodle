@@ -330,6 +330,10 @@ public class Test
 		hangmanDict.add("TTT");
 		hangmanDict.add("FILTER ME");
 		
+		// adding multiple at once
+		hangmanDict.addAll(Arrays.asList("THIS", "IS", "A", "LIST"));
+		
+		
 		// TODO
 	}
 	
@@ -359,13 +363,6 @@ public class Test
 		int biggestSetSize = -1; // for selecting which space the guess goes into
 		int biggestSetIndex = -1;
 		
-		boolean toReturn = false; // was the guess correct
-		
-		// wait... something's not right lol
-		// step 1: EaaaE, aaaaa, EEbbE, EEcdE -> [EaaaE] [aaaaa] [EEbbE, EEcdE]
-		// step 2: pick [EEbbE, EEcdE]
-		// I think what I wrote in userGuess does that entire thing already
-		
 		/* Sort words into mini-sets based on where the userGuess occurs
 		 * ex: if userGuess is 'E', then "ease, ever, eyes, elks" would get split up
 		 * and the biggest list "ever, eyes" would be chosen
@@ -393,7 +390,7 @@ public class Test
 		
 		// pick biggest miniSet to be our new dict
 		for (int k=0; k<miniSets.size(); k++) {
-			if (miniSets.get(k).size() > biggestSetSize) {
+			if (miniSets.get(k).size() > biggestSetSize) { // note: I could do a "tiebreaker" for same-size to have least correct guesses but... this is evil enough
 				biggestSetSize = miniSets.get(k).size();
 				biggestSetIndex = k;
 			}
