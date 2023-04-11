@@ -252,6 +252,8 @@ public class Test
 		String currentHint = "_";
 		boolean gameWin = false;
 		
+		hangmanInit();
+		
 		// TODO
 		// step 1: user selects (or randomises) difficulty
 		// difficulty determines word size and number of lives
@@ -264,13 +266,16 @@ public class Test
 		TreeSet<String> currentDict = hangmanOfLength(currentHangmanLength);
 		// hint starts as blanks _ _ _ ...
 		currentHint = "_";
-		for (int i=0; i<currentHangmanLength; i++) {
+		for (int i=1; i<currentHangmanLength; i++) {
 			currentHint = currentHint + " _";
 		}
 		
 		// step 3: print the hangman spaces, loop: what letter choice?
 		while (!gameOver) {
 			customPrint(currentHint);
+			
+			debugPrint(currentDict.toString());
+			
 			// TODO: print guesses the user has tried so far, lives remaining
 			customPrint("What letter will you guess next?: ", false);
 			
@@ -286,11 +291,15 @@ public class Test
 				}
 			}
 			
+			userChoice = (userChoice+"").toUpperCase().charAt(0);
+			
 			// checking if guess is correct
 			if (hangmanGuess(currentDict, userChoice)) {
 				customPrint("Your guess is correct!");
 				
-				// TODO: update the hint; toUpperCase
+				updateHint(currentHint, currentDict, userChoice);
+				
+				// TODO
 				// check if the whole word is guessed -> gameWin = true, gameOver = true
 			} else {
 				currentHangmanLives--;
@@ -312,10 +321,10 @@ public class Test
 	// populate hangman dictionary
 	// this should only need to be called once
 	public static void hangmanInit() {
-		hangmanDict.add("bat");
-		hangmanDict.add("cat");
-		hangmanDict.add("cot");
-		hangmanDict.add("Filter me");
+		hangmanDict.add("BAT");
+		hangmanDict.add("CAT");
+		hangmanDict.add("COT");
+		hangmanDict.add("FILTER ME");
 		
 		// TODO
 	}
@@ -345,8 +354,6 @@ public class Test
 		
 		int biggestSetSize = -1; // for selecting which space the guess goes into
 		int biggestSetIndex = -1;
-		
-		userGuess = (userGuess+"").toUpperCase().charAt(0); // NOTE - goofy, but easy, toUpperCase - would probably be better to do this before calling the method
 		
 		int wordLength = currentDict.first().length();
 		ArrayList<TreeSet<String>> proposedDicts = new ArrayList<TreeSet<String>>();
@@ -385,6 +392,7 @@ public class Test
 		
 		// or, successfully narrowed down currentDict to words that don't contain the guess
 		currentDict = proposedDicts.get(biggestSetIndex);
+		debugPrint("hangmanGuess dict after narrowing " + currentDict.toString());
 		return false;
 	}
 	
@@ -418,11 +426,26 @@ public class Test
 			}
 		}
 		
-		// TODO: pick the miniSet with the most possibilities
+		// pick biggest miniSet to be our new dict
+		int biggestSetIndex = 0;
+		int biggestSetSize = -1;
+		for (int i=0; i<miniSets.size(); i++) {
+			if (miniSets.get(i).size() > biggestSetSize) {
+				biggestSetSize = miniSets.get(i).size();
+				biggestSetIndex = i;
+			}
+		}
 		
+		currentDict = miniSets.get(biggestSetIndex); // voila!!!
 		
-		// TODO: replace() chars in hint string with user guess
-		
+		// replace chars in hint string with user guess
+		String currentFirst = currentDict.first();
+		for (int i=0; i<currentFirst.length(); i++) {
+			if (currentFirst.charAt(i) == userGuess) {
+				// "EasE" -> "E _ _ E"
+				toReturn = toReturn.substring(0, i*2) + userGuess + toReturn.substring(i*2);
+			}
+		}
 		
 		// TODO: Actually, I could move that sorting to hangmanGuess
 		// and it would solve *most* of the optimization problem
