@@ -17,7 +17,6 @@ public class Test
 		
 		
 		customPrint("Welcome!", true);
-		printMainMenu();
 		
 		while (menuContinue(keyboard));
 		
@@ -53,6 +52,7 @@ public class Test
 		//debugPrint("Beginning menuContinue");
 		String keyboardString = "";
 		
+		printMainMenu();
 		customPrint("Please enter an option: ", true);
 		keyboardString = kb.nextLine();
 		
@@ -275,6 +275,7 @@ public class Test
 		
 		// step 3: print the hangman spaces, loop: what letter choice?
 		while (!gameOver) {
+			customPrint("\n\n");
 			customPrint(currentHint);
 			
 			debugPrint(currentDict.toString());
@@ -282,7 +283,7 @@ public class Test
 			customPrint("You have " + currentHangmanLives + " lives remaining.", true);
 			if (currentGuesses.length() > 0) customPrint("Your guesses so far: " + currentGuesses, true);
 			else customPrint("You haven\'t guessed anything yet.", true);
-			customPrint("What letter will you guess next?: ", false);
+			customPrint("What letter will you guess next? (To quit, hit \'enter\' without a guess): ", false);
 			
 			// set user input (or quit early)
 			String tmpNextLine = kb.nextLine();
@@ -290,18 +291,19 @@ public class Test
 			else {
 				customPrint("Press enter again to confirm quit");
 				if (kb.nextLine().length() < 1) {
-					customPrint("Quitting game");
+					customPrint("Quitting evil hangman");
 					gameWin = false;
 					gameOver = true;
 					
-					return; // Quit instantly. NOTE - may want to revisit and go to game over screen instead
+					return;
 				}
 			}
 
 			// record their guess
 			userChoice = (userChoice+"").toUpperCase().charAt(0);
-			if (currentGuesses.length() > 0) currentGuesses.append(", ");
-			currentGuesses.append(userChoice);
+			
+			if (currentGuesses.length() > 0) currentGuesses = currentGuesses.concat(", ");
+			currentGuesses = currentGuesses.concat(userChoice+"");
 			
 			// checking if guess is correct
 			if (hangmanGuess(currentDict, userChoice)) {
@@ -326,9 +328,8 @@ public class Test
 		
   		if (gameWin) customPrint("Congratulations, you won! The word was " + currentDict.first() + ".", true);
 		else customPrint("Muahaha! You ran out of lives, better luck next time. Possible words were: " + currentDict.toString(), true);
-
-		// TODO
-		// send back to main menu, need to add a prompt there: play again? Y/N
+  		
+  		customPrint("Back to the main menu...\n\n");
 	}
 	
 	// populate hangman dictionary
