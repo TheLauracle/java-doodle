@@ -246,15 +246,18 @@ public class Test
 		//   a space in the winning word counts as a letter
 		debugPrint("Default hangman values for testing");
 		int currentHangmanLength = 3;
-		int currentHangmanLives = 3;
-		boolean gameOver = false;
+		
 		char userChoice = ' ';
 		String currentHint = "_";
+
+		int currentHangmanLives = 3;
+		String currentGuesses = "";
+		boolean gameOver = false;
 		boolean gameWin = false;
 		
 		hangmanInit();
 		
-		// TODO
+		// TODO (after adding words of other lengths - maybe 3 through 6)
 		// step 1: user selects (or randomises) difficulty
 		// difficulty determines word size and number of lives
 		currentHangmanLength = 3; // to be replaced with user selection
@@ -276,7 +279,9 @@ public class Test
 			
 			debugPrint(currentDict.toString());
 			
-			// TODO: print guesses the user has tried so far, lives remaining
+			customPrint("You have " + currentHangmanLives + " lives remaining.", true);
+			if (currentGuesses.length() > 0) customPrint("Your guesses so far: " + currentGuesses, true);
+			else customPrint("You haven\'t guessed anything yet.", true);
 			customPrint("What letter will you guess next?: ", false);
 			
 			// set user input (or quit early)
@@ -292,32 +297,38 @@ public class Test
 					return; // Quit instantly. NOTE - may want to revisit and go to game over screen instead
 				}
 			}
-			
+
+			// record their guess
 			userChoice = (userChoice+"").toUpperCase().charAt(0);
+			if (currentGuesses.length() > 0) currentGuesses.append(", ");
+			currentGuesses.append(userChoice);
 			
 			// checking if guess is correct
 			if (hangmanGuess(currentDict, userChoice)) {
 				customPrint("Your guess is correct!");
-				
 				currentHint = updateHint(currentHint, currentDict, userChoice);
 				
-				// TODO
-				// check if the whole word is guessed -> gameWin = true, gameOver = true
+				//did they win?
+				if (currentDict.size() == 1 && currentDict.first().replaceAll("\\s","").equals(currentHint.replaceAll("\\s", ""))) {
+					gameWin = true;
+					gameOver = true;
+				}
 			} else {
 				currentHangmanLives--;
-				customPrint("Your guess is incorrect! New lives: " + currentHangmanLives);
+				customPrint("Your guess is incorrect! Lives remaining: " + currentHangmanLives);
 				if (currentHangmanLives < 1) {
 					gameWin = false;
 					gameOver = true;
 				}
 			}
 		}
+
 		
+  		if (gameWin) customPrint("Congratulations, you won! The word was " + currentDict.first() + ".", true);
+		else customPrint("Muahaha! You ran out of lives, better luck next time. Possible words were: " + currentDict.toString(), true);
+
 		// TODO
-		// print win or loss; show the word; "play again?" -> call evilHangman() again
-		// technically this could lead to stack memory problems
-		// to fix that, I could just move the "play again?" prompt to the main menu
-		// actually I might do that
+		// send back to main menu, need to add a prompt there: play again? Y/N
 	}
 	
 	// populate hangman dictionary
@@ -334,7 +345,7 @@ public class Test
 		hangmanDict.addAll(Arrays.asList("THIS", "IS", "A", "LIST"));
 		
 		
-		// TODO
+		// TODO - add more words
 	}
 	
 	// return a new set for hangman but only with words of the desired length
